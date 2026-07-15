@@ -86,7 +86,7 @@ export async function POST(request: Request) {
     ];
 
     const response = await groq.chat.completions.create({
-      model: "llama3-70b-8192",
+      model: "llama-3.3-70b-versatile",
       messages: groqMessages,
       tools: tools,
       tool_choice: "auto",
@@ -152,7 +152,7 @@ export async function POST(request: Request) {
 
       // Generate the final response
       const secondResponse = await groq.chat.completions.create({
-        model: "llama3-70b-8192",
+        model: "llama-3.3-70b-versatile",
         messages: groqMessages,
       });
 
