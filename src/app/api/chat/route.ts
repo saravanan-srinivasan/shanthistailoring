@@ -149,14 +149,12 @@ export async function POST(request: Request) {
       });
 
       return NextResponse.json({
-        role: "assistant",
-        content: secondResponse.choices[0].message.content
+        reply: secondResponse.choices[0].message.content
       });
     }
 
     return NextResponse.json({
-      role: "assistant",
-      content: responseMessage.content
+      reply: responseMessage.content
     });
 
   } catch (error) {
