@@ -3,9 +3,7 @@ import { Groq } from 'groq-sdk';
 import { createClient } from '@supabase/supabase-js';
 import { sendConfirmationEmail } from '@/lib/email';
 
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
-});
+// Groq is instantiated inside the POST function now so missing keys don't crash the route
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
@@ -65,6 +63,16 @@ const tools = [
 
 export async function POST(request: Request) {
   try {
+    if (!process.env.GROQ_API_KEY) {
+      return NextResponse.json({ 
+        reply: "My AI brain is currently offline because the GROQ_API_KEY is missing from the environment variables! Please add it to Vercel and redeploy." 
+      });
+    }
+
+    const groq = new Groq({
+      apiKey: process.env.GROQ_API_KEY,
+    });
+
     const { messages } = await request.json();
 
     if (!messages || !Array.isArray(messages)) {
