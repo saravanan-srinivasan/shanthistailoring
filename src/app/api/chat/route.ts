@@ -116,7 +116,7 @@ export async function POST(request: Request) {
             status: "pending"
           };
 
-          const { error } = await supabase.table("appointments").insert(apptData);
+          const { error } = await supabase.from("appointments").insert(apptData);
 
           if (error) {
             functionResponse = `Error booking appointment: ${error.message}`;
