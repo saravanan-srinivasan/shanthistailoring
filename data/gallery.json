@@ -1,0 +1,11 @@
+[
+  { "src": "/images/bridal.png", "cat": "Bridal", "label": "Bridal Lehenga", "size": "tall" },
+  { "src": "/images/blouse.png", "cat": "Blouses", "label": "Designer Blouse", "size": "normal" },
+  { "src": "/images/aari.png", "cat": "Aari Work", "label": "Aari Embroidery", "size": "normal" },
+  { "src": "/images/chudidhar.png", "cat": "Suits", "label": "Anarkali Suit", "size": "tall" },
+  { "src": "/images/kids.png", "cat": "Kids Wear", "label": "Pattu Pavadai", "size": "normal" },
+  { "src": "/images/blouse.png", "cat": "Blouses", "label": "Silk Blouse", "size": "normal" },
+  { "src": "/images/bridal.png", "cat": "Bridal", "label": "Bridal Saree", "size": "normal" },
+  { "src": "/images/aari.png", "cat": "Aari Work", "label": "Maggam Work", "size": "tall" },
+  { "src": "/images/kids.png", "cat": "Kids Wear", "label": "Birthday Frock", "size": "normal" }
+]
