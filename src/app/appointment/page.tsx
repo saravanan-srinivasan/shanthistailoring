@@ -7,7 +7,6 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import Image from "next/image";
 import { CheckCircle, Phone, MessageSquare, Clock } from "lucide-react";
-import { supabase } from "@/lib/supabase";
 
 const schema = z.object({
   name:            z.string().min(2, "Please enter your full name."),
@@ -54,8 +53,12 @@ export default function AppointmentPage() {
 
   const onSubmit = async (values: FormValues) => {
     try {
-      const { error } = await supabase.from("appointments").insert([
-        {
+      const response = await fetch('/api/appointment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
           first_name: values.name.split(" ")[0],
           last_name: values.name.split(" ").slice(1).join(" ") || "",
           email: values.email,
@@ -64,13 +67,11 @@ export default function AppointmentPage() {
           time: values.preferredTime,
           service_type: values.dressType,
           notes: values.notes || null,
-        },
-      ]);
+        }),
+      });
 
-      if (error) {
-        console.error("Error saving appointment:", error);
-        alert("Failed to submit appointment. Please try again.");
-        return;
+      if (!response.ok) {
+        throw new Error("Failed to submit appointment");
       }
 
       setSubmitted(true);
