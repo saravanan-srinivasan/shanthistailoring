@@ -66,7 +66,7 @@ export default function AboutPage() {
             <div className="absolute inset-4 border border-[#C9A84C]/20 pointer-events-none" />
             {/* Stats overlay */}
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-8 flex gap-10">
-              {[["1,200+", "Happy Clients"], ["8+", "Years Crafting"], ["50+", "Styles"]].map(([n, l]) => (
+              {[["1,200+", "Happy Clients"], ["100%", "Custom Fit"], ["50+", "Styles"]].map(([n, l]) => (
                 <div key={l}>
                   <p className="text-[#C9A84C] text-2xl" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 500 }}>{n}</p>
                   <p className="text-white/40 text-[10px] tracking-widest uppercase mt-0.5">{l}</p>
@@ -96,7 +96,7 @@ export default function AboutPage() {
                 Founded in the heart of Thiruvottiyur, Chennai, Shanthi's Tailoring began with a simple but powerful vision: to bring unparalleled precision and artistry to women's tailoring.
               </p>
               <p>
-                For years, we have mastered the delicate balance between traditional Indian embroidery techniques and contemporary silhouettes. Every garment we create is a conversation between heritage and modernity.
+                With immense passion, we have mastered the delicate balance between traditional Indian embroidery techniques and contemporary silhouettes. Every garment we create is a conversation between heritage and modernity.
               </p>
               <p>
                 Today, we are transforming into India's first fashion-tech tailoring studio — where AI-powered consultations, digital measurements, and real-time order tracking meet the finest handcraft traditions.

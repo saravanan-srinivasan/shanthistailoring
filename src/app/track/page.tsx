@@ -6,12 +6,7 @@ import { Search, MapPin, CheckCircle2, CircleDashed, CheckCircle } from "lucide-
 
 const STAGES = [
   "Pending",
-  "Fabric Sourced",
-  "Cutting",
-  "Aari Embroidery",
-  "Stitching",
-  "Quality Check",
-  "Ready for Trial",
+  "In Progress",
   "Completed"
 ];
 

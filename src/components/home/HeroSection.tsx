@@ -186,7 +186,7 @@ export default function HeroSection() {
           <div className="grid grid-cols-3 divide-x divide-white/8 py-6">
             {[
               { num: "1,200+", label: "Happy Clients"  },
-              { num: "8+",     label: "Years of Craft" },
+              { num: "100%",     label: "Custom Fit" },
               { num: "50+",    label: "Styles Offered" },
             ].map(({ num, label }) => (
               <div key={label} className="flex flex-col items-center text-center px-4 py-1">

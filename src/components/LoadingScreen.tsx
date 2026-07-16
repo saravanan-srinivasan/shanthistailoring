@@ -134,7 +134,7 @@ export default function LoadingScreen() {
               transition={{ duration: 0.8, delay: 1.2 }}
               className="text-white/30 text-[10px] tracking-[0.4em] uppercase mt-4 font-light"
             >
-              Crafting Elegance Since 2024
+              Crafting Elegance Since 2026
             </motion.p>
           </div>
 
