@@ -21,6 +21,7 @@ export default async function AdminDashboard() {
     .from('appointments')
     .select('*')
     .neq('service_type', 'Contact Message')
+    .neq('service_type', 'Gallery Item')
     .order('created_at', { ascending: false })
 
   // Helper to correctly format phone number for WhatsApp
@@ -107,7 +108,7 @@ export default async function AdminDashboard() {
                       if (!appointments || appointments.length === 0) return '0%';
                       const success = appointments.filter(a => {
                         const s = (a.status || '').toLowerCase();
-                        return s === 'completed' || s === 'ready for trial' || s === 'quality check' || s === 'stitching' || s === 'aari embroidery' || s === 'cutting' || s === 'fabric sourced';
+                        return s === 'completed' || s === 'in progress';
                       }).length;
                       return Math.round((success / appointments.length) * 100) + '%';
                     })()}
