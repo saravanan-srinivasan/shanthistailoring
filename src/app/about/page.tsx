@@ -66,7 +66,7 @@ export default function AboutPage() {
             <div className="absolute inset-4 border border-[#C9A84C]/20 pointer-events-none" />
             {/* Stats overlay */}
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-8 flex gap-10">
-              {[["1,200+", "Happy Clients"], ["100%", "Custom Fit"], ["50+", "Styles"]].map(([n, l]) => (
+              {[["100%", "Satisfaction"], ["100%", "Custom Fit"], ["50+", "Styles"]].map(([n, l]) => (
                 <div key={l}>
                   <p className="text-[#C9A84C] text-2xl" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 500 }}>{n}</p>
                   <p className="text-white/40 text-[10px] tracking-widest uppercase mt-0.5">{l}</p>
@@ -82,7 +82,7 @@ export default function AboutPage() {
             viewport={{ once: true }}
             transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
           >
-            <p className="section-label mb-5">Est. 2024 · Chennai</p>
+            <p className="section-label mb-5">Est. 2026 · Chennai</p>
             <h2
               className="text-3xl md:text-4xl text-white mb-6 leading-snug"
               style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 300 }}

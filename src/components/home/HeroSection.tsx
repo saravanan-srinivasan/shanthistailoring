@@ -87,8 +87,8 @@ export default function HeroSection() {
                 transition={{ duration: 0.9, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
                 className="flex items-center gap-4 mb-6"
               >
-                <div className="w-7 h-px bg-[#C9A84C] flex-shrink-0" />
-                <span className="section-label">Est. 2024 · Chennai, India</span>
+                <div className="w-10 h-px bg-[#C9A84C]" />
+                <span className="section-label">Est. 2026 · Chennai, India</span>
               </motion.div>
 
               {/* Main headings */}
@@ -185,7 +185,7 @@ export default function HeroSection() {
         <div className="max-w-screen-xl mx-auto px-6 md:px-10">
           <div className="grid grid-cols-3 divide-x divide-white/8 py-6">
             {[
-              { num: "1,200+", label: "Happy Clients"  },
+              { num: "100%", label: "Satisfaction"  },
               { num: "100%",     label: "Custom Fit" },
               { num: "50+",    label: "Styles Offered" },
             ].map(({ num, label }) => (

@@ -7,7 +7,7 @@ const testimonials = [
     quote:
       "The precision of the Aari work and the perfect fit made me feel like royalty on my wedding day. I've never worn anything crafted with such devotion.",
     name: "Priya Sharma",
-    role: "Bridal Client · 2024",
+    role: "Bridal Client · 2026",
     rating: 5,
     initial: "P",
   },

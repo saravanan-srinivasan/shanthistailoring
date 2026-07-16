@@ -115,7 +115,7 @@ export default function AdminTestimonials() {
                 </div>
                 <div>
                   <label className="text-[10px] tracking-widest uppercase text-white/40 block mb-1">Role / Subtitle</label>
-                  <input required value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})} className="w-full bg-[#1A1A1A] border border-white/10 px-3 py-2 text-sm text-white outline-none focus:border-[#C9A84C]" placeholder="Bridal Client · 2024" />
+                  <input required value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})} className="w-full bg-[#1A1A1A] border border-white/10 px-3 py-2 text-sm text-white outline-none focus:border-[#C9A84C]" placeholder="Bridal Client · 2026" />
                 </div>
                 <div>
                   <label className="text-[10px] tracking-widest uppercase text-white/40 block mb-1">The Review</label>
