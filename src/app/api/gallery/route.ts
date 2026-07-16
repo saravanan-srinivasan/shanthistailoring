@@ -88,3 +88,25 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export async function PUT(request: Request) {
+  const supabase = await createClient();
+  try {
+    const { id, label, cat, src, size } = await request.json();
+    const payload = JSON.stringify({ src, size });
+    
+    const { error } = await supabase
+      .from('appointments')
+      .update({
+        first_name: label,
+        last_name: cat,
+        notes: payload
+      })
+      .eq('id', id);
+
+    if (error) throw error;
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}

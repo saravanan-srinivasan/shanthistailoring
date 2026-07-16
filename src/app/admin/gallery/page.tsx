@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { LogOut, Calendar, Image as ImageIcon, MessageSquare, Settings, Star, Plus, Trash2 } from 'lucide-react';
+import { LogOut, Calendar, Image as ImageIcon, MessageSquare, Settings, Star, Plus, Trash2, Edit2 } from 'lucide-react';
 import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
 
@@ -17,9 +17,11 @@ export default function AdminGallery() {
   const [formData, setFormData] = useState({
     label: "",
     cat: "Bridal",
+    src: "",
     size: "normal"
   });
   const [file, setFile] = useState<File | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchGallery();
@@ -39,43 +41,44 @@ export default function AdminGallery() {
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!file) {
+    if (!file && !editingId) {
       alert("Please select an image file to upload.");
       return;
     }
 
     setAdding(true);
     try {
-      // 1. Upload to Supabase Storage
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
-      const { error: uploadError } = await supabase.storage
-        .from('gallery')
-        .upload(fileName, file);
+      let finalSrc = formData.src;
 
-      if (uploadError) {
-        throw new Error(uploadError.message);
+      // 1. Upload to Supabase Storage if a new file is selected
+      if (file) {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Math.random()}.${fileExt}`;
+        const { error: uploadError } = await supabase.storage
+          .from('gallery')
+          .upload(fileName, file);
+
+        if (uploadError) {
+          throw new Error(uploadError.message);
+        }
+
+        // 2. Get Public URL
+        const { data: { publicUrl } } = supabase.storage
+          .from('gallery')
+          .getPublicUrl(fileName);
+        
+        finalSrc = publicUrl;
       }
-
-      // 2. Get Public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from('gallery')
-        .getPublicUrl(fileName);
 
       // 3. Save to database via API
       const res = await fetch('/api/gallery', {
-        method: 'POST',
+        method: editingId ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, src: publicUrl })
+        body: JSON.stringify({ ...formData, id: editingId, src: finalSrc })
       });
       
       if (res.ok) {
-        setFormData({ label: "", cat: "Bridal", size: "normal" });
-        setFile(null);
-        // Reset file input value
-        const fileInput = document.getElementById('image-upload') as HTMLInputElement;
-        if (fileInput) fileInput.value = "";
-        
+        cancelEdit();
         fetchGallery();
       } else {
         throw new Error("Failed to save image entry");
@@ -86,6 +89,24 @@ export default function AdminGallery() {
     } finally {
       setAdding(false);
     }
+  };
+
+  const startEdit = (img: any) => {
+    setEditingId(img.id);
+    setFormData({ label: img.label, cat: img.cat, src: img.src, size: img.size });
+    setFile(null);
+    const fileInput = document.getElementById('image-upload') as HTMLInputElement;
+    if (fileInput) fileInput.value = "";
+    // Scroll to top to see the form
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setFormData({ label: "", cat: "Bridal", src: "", size: "normal" });
+    setFile(null);
+    const fileInput = document.getElementById('image-upload') as HTMLInputElement;
+    if (fileInput) fileInput.value = "";
   };
 
   const handleDelete = async (id: string) => {
@@ -147,12 +168,16 @@ export default function AdminGallery() {
           <div className="lg:col-span-1">
             <div className="bg-white/5 border border-white/10 p-6 sticky top-6">
               <h3 className="text-lg text-white font-medium mb-4 flex items-center gap-2">
-                <Plus size={16} className="text-[#C9A84C]" /> Add Image
+                {editingId ? <Edit2 size={16} className="text-[#C9A84C]" /> : <Plus size={16} className="text-[#C9A84C]" />} 
+                {editingId ? 'Edit Image' : 'Add Image'}
               </h3>
               <form onSubmit={handleAdd} className="space-y-4">
                 <div>
-                  <label className="text-[10px] tracking-widest uppercase text-white/40 block mb-1">Upload Image</label>
-                  <input id="image-upload" type="file" accept="image/*" required onChange={e => setFile(e.target.files?.[0] || null)} className="w-full bg-[#1A1A1A] border border-white/10 px-3 py-2 text-sm text-white outline-none focus:border-[#C9A84C] file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-medium file:bg-[#C9A84C] file:text-black hover:file:bg-[#E8C97A]" />
+                  <label className="text-[10px] tracking-widest uppercase text-white/40 block mb-1">Upload Image {editingId && '(Optional)'}</label>
+                  <input id="image-upload" type="file" accept="image/*" required={!editingId} onChange={e => setFile(e.target.files?.[0] || null)} className="w-full bg-[#1A1A1A] border border-white/10 px-3 py-2 text-sm text-white outline-none focus:border-[#C9A84C] file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-medium file:bg-[#C9A84C] file:text-black hover:file:bg-[#E8C97A]" />
+                  {editingId && formData.src && (
+                    <p className="text-[10px] text-white/40 mt-2">Leave empty to keep existing image.</p>
+                  )}
                 </div>
                 <div>
                   <label className="text-[10px] tracking-widest uppercase text-white/40 block mb-1">Title / Label</label>
@@ -175,9 +200,16 @@ export default function AdminGallery() {
                     <option value="tall">Tall (Portrait)</option>
                   </select>
                 </div>
-                <button type="submit" disabled={adding} className="w-full bg-[#C9A84C] text-black py-2 text-sm uppercase tracking-widest font-medium hover:bg-[#E8C97A] transition-colors mt-4">
-                  {adding ? 'Adding...' : 'Publish Image'}
-                </button>
+                <div className="flex gap-3 mt-4">
+                  <button type="submit" disabled={adding} className="flex-1 bg-[#C9A84C] text-black py-2 text-sm uppercase tracking-widest font-medium hover:bg-[#E8C97A] transition-colors">
+                    {adding ? (editingId ? 'Saving...' : 'Adding...') : (editingId ? 'Save Changes' : 'Publish Image')}
+                  </button>
+                  {editingId && (
+                    <button type="button" onClick={cancelEdit} className="bg-white/10 text-white py-2 px-4 text-sm uppercase tracking-widest font-medium hover:bg-white/20 transition-colors">
+                      Cancel
+                    </button>
+                  )}
+                </div>
               </form>
             </div>
           </div>
@@ -193,9 +225,14 @@ export default function AdminGallery() {
                     <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-4 text-center">
                       <p className="text-white font-medium mb-1">{img.label}</p>
                       <p className="text-[#C9A84C] text-[10px] uppercase tracking-widest mb-4">{img.cat}</p>
-                      <button onClick={() => handleDelete(img.id)} className="bg-red-500/20 text-red-400 p-2 rounded-full hover:bg-red-500 hover:text-white transition-colors">
-                        <Trash2 size={16} />
-                      </button>
+                      <div className="flex gap-3">
+                        <button onClick={() => startEdit(img)} className="bg-white/10 text-white p-2 rounded-full hover:bg-white/20 transition-colors">
+                          <Edit2 size={16} />
+                        </button>
+                        <button onClick={() => handleDelete(img.id)} className="bg-red-500/20 text-red-400 p-2 rounded-full hover:bg-red-500 hover:text-white transition-colors">
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
