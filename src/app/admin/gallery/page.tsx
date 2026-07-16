@@ -3,6 +3,11 @@
 import { useState, useEffect } from 'react';
 import { LogOut, Calendar, Image as ImageIcon, MessageSquare, Settings, Star, Plus, Trash2 } from 'lucide-react';
 import Link from 'next/link';
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 export default function AdminGallery() {
   const [gallery, setGallery] = useState<any[]>([]);
@@ -12,9 +17,9 @@ export default function AdminGallery() {
   const [formData, setFormData] = useState({
     label: "",
     cat: "Bridal",
-    src: "",
     size: "normal"
   });
+  const [file, setFile] = useState<File | null>(null);
 
   useEffect(() => {
     fetchGallery();
@@ -34,19 +39,50 @@ export default function AdminGallery() {
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!file) {
+      alert("Please select an image file to upload.");
+      return;
+    }
+
     setAdding(true);
     try {
+      // 1. Upload to Supabase Storage
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const { error: uploadError } = await supabase.storage
+        .from('gallery')
+        .upload(fileName, file);
+
+      if (uploadError) {
+        throw new Error(uploadError.message);
+      }
+
+      // 2. Get Public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('gallery')
+        .getPublicUrl(fileName);
+
+      // 3. Save to database via API
       const res = await fetch('/api/gallery', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({ ...formData, src: publicUrl })
       });
+      
       if (res.ok) {
-        setFormData({ label: "", cat: "Bridal", src: "", size: "normal" });
+        setFormData({ label: "", cat: "Bridal", size: "normal" });
+        setFile(null);
+        // Reset file input value
+        const fileInput = document.getElementById('image-upload') as HTMLInputElement;
+        if (fileInput) fileInput.value = "";
+        
         fetchGallery();
+      } else {
+        throw new Error("Failed to save image entry");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
+      alert("Upload failed: " + error.message);
     } finally {
       setAdding(false);
     }
@@ -115,8 +151,8 @@ export default function AdminGallery() {
               </h3>
               <form onSubmit={handleAdd} className="space-y-4">
                 <div>
-                  <label className="text-[10px] tracking-widest uppercase text-white/40 block mb-1">Image URL</label>
-                  <input required value={formData.src} onChange={e => setFormData({...formData, src: e.target.value})} className="w-full bg-[#1A1A1A] border border-white/10 px-3 py-2 text-sm text-white outline-none focus:border-[#C9A84C]" placeholder="/images/my-photo.jpg" />
+                  <label className="text-[10px] tracking-widest uppercase text-white/40 block mb-1">Upload Image</label>
+                  <input id="image-upload" type="file" accept="image/*" required onChange={e => setFile(e.target.files?.[0] || null)} className="w-full bg-[#1A1A1A] border border-white/10 px-3 py-2 text-sm text-white outline-none focus:border-[#C9A84C] file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-medium file:bg-[#C9A84C] file:text-black hover:file:bg-[#E8C97A]" />
                 </div>
                 <div>
                   <label className="text-[10px] tracking-widest uppercase text-white/40 block mb-1">Title / Label</label>
