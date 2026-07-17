@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { Groq } from 'groq-sdk';
 import { createClient } from '@supabase/supabase-js';
-import { sendConfirmationEmail } from '@/lib/email';
+import { sendConfirmationEmail, sendAdminNotification } from '@/lib/email';
 
 // Groq is instantiated inside the POST function now so missing keys don't crash the route
 
@@ -138,6 +138,9 @@ export async function POST(request: Request) {
             if (email) {
               await sendConfirmationEmail(email, name, date, time);
             }
+            // Send admin notification
+            await sendAdminNotification('newmsshravan2004@gmail.com', name, date, time, phone || 'N/A', email || 'N/A');
+            
             functionResponse = `Successfully booked an appointment for ${name} on ${date} at ${time} and sent an email confirmation.`;
           }
         } else if (functionName === "generate_design_sketch") {

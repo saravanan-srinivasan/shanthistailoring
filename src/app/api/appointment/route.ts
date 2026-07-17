@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { sendConfirmationEmail } from '@/lib/email';
+import { sendConfirmationEmail, sendAdminNotification } from '@/lib/email';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
@@ -30,11 +30,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Failed to save appointment" }, { status: 500 });
     }
 
-    // 2. Send the confirmation email
+    // 2. Send the confirmation email and admin alert
+    const fullName = last_name ? `${first_name} ${last_name}` : first_name;
+    
     if (email) {
-      const fullName = last_name ? `${first_name} ${last_name}` : first_name;
       await sendConfirmationEmail(email, fullName, date, time);
     }
+    
+    // Send admin notification
+    await sendAdminNotification('newmsshravan2004@gmail.com', fullName, date, time, phone || 'N/A', email || 'N/A');
 
     return NextResponse.json({ success: true });
   } catch (err) {

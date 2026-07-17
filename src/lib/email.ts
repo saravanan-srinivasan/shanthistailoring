@@ -50,3 +50,47 @@ export async function sendConfirmationEmail(email: string, name: string, date: s
     return false;
   }
 }
+
+export async function sendAdminNotification(adminEmail: string, customerName: string, date: string, time: string, phone: string, email: string) {
+  const smtpUser = process.env.EMAIL_HOST_USER;
+  const smtpPass = process.env.EMAIL_HOST_PASSWORD;
+
+  const htmlContent = `
+    <html>
+      <body style="font-family: Arial, sans-serif; color: #333; max-width: 600px; padding: 20px;">
+        <h2 style="color: #222;">New Appointment Alert!</h2>
+        <p><strong>Customer:</strong> ${customerName}</p>
+        <p><strong>Date:</strong> ${date}</p>
+        <p><strong>Time:</strong> ${time}</p>
+        <p><strong>Phone:</strong> ${phone}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><br/>Please check the Admin Portal for full details.</p>
+      </body>
+    </html>
+  `;
+
+  if (!smtpUser || !smtpPass) {
+    console.log("MOCK ADMIN ALERT SENT to " + adminEmail);
+    return true;
+  }
+
+  try {
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
+      auth: { user: smtpUser, pass: smtpPass },
+    });
+
+    await transporter.sendMail({
+      from: `"Shanthi's Website" <${smtpUser}>`,
+      to: adminEmail,
+      subject: `New Booking: ${customerName} on ${date}`,
+      html: htmlContent,
+    });
+    return true;
+  } catch (error) {
+    console.error("Failed to send admin alert:", error);
+    return false;
+  }
+}
