@@ -3,82 +3,20 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 
-const services = [
-  {
-    num: "01",
-    title: "Saree Blouse Stitching",
-    sub: "Classic Precision",
-    desc: "The foundation of every saree look. We take exact measurements to ensure your blouse fits flawlessly — comfortable, elegant, and timeless.",
-    price: "From ₹1,500",
-    duration: "3–5 Days",
-    img: "/images/blouse.png",
-  },
-  {
-    num: "02",
-    title: "Designer Blouse",
-    sub: "Haute Couture",
-    desc: "Custom patterns, deep necks, statement sleeves. Every detail is deliberate — designed around your body, your saree, and your story.",
-    price: "From ₹2,500",
-    duration: "5–7 Days",
-    img: "/images/blouse.png",
-  },
-  {
-    num: "03",
-    title: "Bridal Blouse",
-    sub: "For Your Greatest Day",
-    desc: "Heavy maggam work, intricate zardosi, and mirror embellishments. A bridal blouse crafted to become a family heirloom.",
-    price: "From ₹5,000",
-    duration: "7–14 Days",
-    img: "/images/bridal.png",
-  },
-  {
-    num: "04",
-    title: "Bridal Wear",
-    sub: "The Complete Bridal Journey",
-    desc: "From your first consultation to the final fitting, we craft your complete bridal ensemble — lehenga, gown, or saree — with unmatched devotion.",
-    price: "From ₹15,000",
-    duration: "14–30 Days",
-    img: "/images/bridal.png",
-  },
-  {
-    num: "05",
-    title: "Chudidhar & Punjabi Suit",
-    sub: "Everyday Elegance",
-    desc: "Perfectly tailored daily and festive suits. Premium fabrics, sharp cuts, and a fit that makes every ordinary day feel special.",
-    price: "From ₹1,200",
-    duration: "3–5 Days",
-    img: "/images/chudidhar.png",
-  },
-  {
-    num: "06",
-    title: "Kids Dresses",
-    sub: "Little Royalty",
-    desc: "Pattu pavadai, silk frocks, and custom party wear. Your little ones deserve the same quality craftsmanship as you do.",
-    price: "From ₹1,000",
-    duration: "3–5 Days",
-    img: "/images/kids.png",
-  },
-  {
-    num: "07",
-    title: "Aari Work & Embroidery",
-    sub: "Heritage Handcraft",
-    desc: "Thread by thread, our artisans preserve a centuries-old tradition. Aari, maggam, zardosi, and mirror work placed entirely by hand.",
-    price: "Custom Pricing",
-    duration: "By Complexity",
-    img: "/images/aari.png",
-  },
-  {
-    num: "08",
-    title: "Alteration & Fitting",
-    sub: "Revive & Perfect",
-    desc: "Breathe new life into existing garments. We resize, restructure, and refinish — making old feel new again.",
-    price: "From ₹300",
-    duration: "1–3 Days",
-    img: "/images/blouse.png",
-  },
-];
+import { useState, useEffect } from "react";
+import { createClient } from "@/utils/supabase/client";
 
 export default function ServicesPage() {
+  const [services, setServices] = useState<any[]>([]);
+  const supabase = createClient();
+
+  useEffect(() => {
+    async function fetchServices() {
+      const { data } = await supabase.from('services').select('*').order('sort_order', { ascending: true });
+      if (data) setServices(data);
+    }
+    fetchServices();
+  }, []);
   return (
     <main className="bg-[#0A0A0A] min-h-screen" style={{ fontFamily: "'Outfit', sans-serif" }}>
 
@@ -176,6 +114,9 @@ export default function ServicesPage() {
                   <p className="text-white/40 text-sm font-light leading-relaxed mb-5">{s.desc}</p>
                   <div className="flex items-center justify-between flex-wrap gap-3">
                     <div className="flex items-center gap-5">
+                      <span className="text-[#C9A84C] font-light text-2xl mb-1 block" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+                        {String(i + 1).padStart(2, '0')}
+                      </span>
                       <span
                         className="text-lg text-[#C9A84C] italic"
                         style={{ fontFamily: "'Cormorant Garamond', serif" }}

@@ -4,40 +4,20 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
-const services = [
-  {
-    num: "01",
-    title: "The Bridal Atelier",
-    sub: "Bespoke Bridal Wear",
-    desc: "Your wedding is a once-in-a-lifetime masterpiece. Our master artisans spend hundreds of hours crafting zardosi, maggam and aari work into a garment that becomes your legacy.",
-    price: "From ₹15,000",
-    img: "/images/bridal.png",
-    tag: "Bridal",
-    reverse: false,
-  },
-  {
-    num: "02",
-    title: "Signature Blouses",
-    sub: "Haute Couture Draping",
-    desc: "A perfectly tailored blouse transforms any saree. We engineer silhouettes from scratch — intricate back designs, statement sleeves, and flawless fits that move with you.",
-    price: "From ₹2,500",
-    img: "/images/blouse.png",
-    tag: "Designer",
-    reverse: true,
-  },
-  {
-    num: "03",
-    title: "Aari & Embroidery",
-    sub: "Heritage Handcraft",
-    desc: "Thread by thread, our artisans preserve a centuries-old tradition. Each motif is placed by hand — Aari, maggam, zardosi and mirror work as it was meant to be done.",
-    price: "Custom Pricing",
-    img: "/images/aari.png",
-    tag: "Embroidery",
-    reverse: false,
-  },
-];
+import { useState, useEffect } from "react";
+import { createClient } from "@/utils/supabase/client";
 
 export default function ServicesSection() {
+  const [services, setServices] = useState<any[]>([]);
+  const supabase = createClient();
+
+  useEffect(() => {
+    async function fetchServices() {
+      const { data } = await supabase.from('services').select('*').eq('is_highlight', true).order('sort_order', { ascending: true }).limit(3);
+      if (data) setServices(data);
+    }
+    fetchServices();
+  }, []);
   return (
     <section className="bg-[#0A0A0A] py-24 md:py-36 overflow-hidden">
       <div className="max-w-screen-xl mx-auto px-6 md:px-10">
@@ -76,9 +56,9 @@ export default function ServicesSection() {
 
       {/* Services — full-bleed alternating panels */}
       <div className="flex flex-col">
-        {services.map((s, i) => (
+        {services.map((s, index) => (
           <motion.div
-            key={s.num}
+            key={s.id}
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
@@ -88,7 +68,7 @@ export default function ServicesSection() {
             {/* Image */}
             <div
               className={`relative h-[360px] md:h-[520px] overflow-hidden ${
-                s.reverse ? "lg:order-2" : "lg:order-1"
+                index % 2 !== 0 ? "lg:order-2" : "lg:order-1"
               }`}
             >
               <Image
@@ -107,14 +87,14 @@ export default function ServicesSection() {
             {/* Text */}
             <div
               className={`flex flex-col justify-center px-8 md:px-14 lg:px-16 py-14 md:py-20 bg-white ${
-                s.reverse ? "lg:order-1" : "lg:order-2"
+                index % 2 !== 0 ? "lg:order-1" : "lg:order-2"
               }`}
             >
               <span
                 className="text-7xl md:text-8xl font-light text-[#F5F2EB] leading-none select-none mb-2"
                 style={{ fontFamily: "'Cormorant Garamond', serif" }}
               >
-                {s.num}
+                {String(index + 1).padStart(2, '0')}
               </span>
               <p className="section-label mb-3">{s.sub}</p>
               <h3

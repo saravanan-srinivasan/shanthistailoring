@@ -57,6 +57,10 @@ export default async function AdminDashboard() {
             <ImageIcon size={16} />
             Gallery Manager
           </Link>
+          <Link href="/admin/pricing" className="flex items-center gap-3 text-sm text-white/50 hover:text-white px-4 py-3 rounded-sm hover:bg-white/5 transition-colors">
+            <TrendingUp size={16} />
+            Pricing Manager
+          </Link>
           <Link href="/admin/settings" className="flex items-center gap-3 text-sm text-white/50 hover:text-white px-4 py-3 rounded-sm hover:bg-white/5 transition-colors">
             <Settings size={16} />
             AI Brain Settings
