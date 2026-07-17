@@ -67,7 +67,7 @@ export default function GalleryPreviewSection() {
                 {galleryItems[0].tag}
               </span>
               {/* Hover overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-end p-5 z-10">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-100 md:opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-end p-5 z-10">
                 <span className="text-white text-xl" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
                   {galleryItems[0].label}
                 </span>
@@ -98,7 +98,7 @@ export default function GalleryPreviewSection() {
                 {item.tag}
               </span>
               {/* Hover overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-end p-4 z-10">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-100 md:opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-end p-4 z-10">
                 <span className="text-white text-lg" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
                   {item.label}
                 </span>

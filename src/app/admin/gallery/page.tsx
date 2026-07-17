@@ -222,7 +222,7 @@ export default function AdminGallery() {
                 {gallery.map((img, i) => (
                   <div key={img.id || i} className="group relative aspect-square bg-[#1A1A1A] border border-white/10 overflow-hidden">
                     <img src={img.src} alt={img.label} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
-                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-4 text-center">
+                    <div className="absolute inset-0 bg-black/60 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-4 text-center">
                       <p className="text-white font-medium mb-1">{img.label}</p>
                       <p className="text-[#C9A84C] text-[10px] uppercase tracking-widest mb-4">{img.cat}</p>
                       <div className="flex gap-3">

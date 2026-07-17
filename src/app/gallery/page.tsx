@@ -102,7 +102,7 @@ export default function GalleryPage() {
                     sizes="(max-width: 768px) 50vw, 33vw"
                   />
                   {/* Hover overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-end p-5">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent opacity-100 md:opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-end p-5">
                     <div>
                       <span className="text-[10px] tracking-[0.3em] uppercase text-[#C9A84C] mb-1 block">
                         {item.cat}
