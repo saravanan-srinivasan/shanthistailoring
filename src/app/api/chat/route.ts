@@ -79,9 +79,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid messages format" }, { status: 400 });
     }
 
+    let customRules = "";
+    const { data } = await supabase.from('settings').select('rules').eq('id', 1).single();
+    if (data && data.rules) {
+      customRules = `\n\nAdditional Custom Rules from Admin:\n${data.rules}`;
+    }
+
     // Ensure system prompt is the first message
     const groqMessages = [
-      { role: "system", content: SYSTEM_PROMPT },
+      { role: "system", content: SYSTEM_PROMPT + customRules },
       ...messages
     ];
 

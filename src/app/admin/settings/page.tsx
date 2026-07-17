@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { Settings, Save, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
-import { Calendar, Image as ImageIcon, LogOut } from 'lucide-react';
+import { createClient } from '@/utils/supabase/client';
+import { Calendar, Image as ImageIcon, LogOut, TrendingUp } from 'lucide-react';
 
 export default function AISettingsPage() {
   const [rules, setRules] = useState('');
@@ -11,34 +12,30 @@ export default function AISettingsPage() {
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
 
+  const supabase = createClient();
+
   useEffect(() => {
-    fetch('http://localhost:8000/api/settings')
-      .then((res) => res.json())
-      .then((data) => {
+    async function loadSettings() {
+      const { data, error } = await supabase.from('settings').select('rules').eq('id', 1).single();
+      if (data) {
         setRules(data.rules || '');
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Failed to load rules:', err);
-        setLoading(false);
-      });
+      } else if (error && error.code !== 'PGRST116') {
+        console.error('Failed to load rules:', error);
+      }
+      setLoading(false);
+    }
+    loadSettings();
   }, []);
 
   const handleSave = async () => {
     setSaving(true);
     setSuccess(false);
-    try {
-      const res = await fetch('http://localhost:8000/api/settings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ rules }),
-      });
-      if (res.ok) {
-        setSuccess(true);
-        setTimeout(() => setSuccess(false), 3000);
-      }
-    } catch (err) {
-      console.error('Failed to save rules:', err);
+    const { error } = await supabase.from('settings').update({ rules }).eq('id', 1);
+    if (!error) {
+      setSuccess(true);
+      setTimeout(() => setSuccess(false), 3000);
+    } else {
+      console.error('Failed to save rules:', error);
     }
     setSaving(false);
   };
@@ -60,6 +57,10 @@ export default function AISettingsPage() {
           <Link href="/admin/gallery" className="flex items-center gap-3 text-sm text-white/50 hover:text-white px-4 py-3 rounded-sm hover:bg-white/5 transition-colors">
             <ImageIcon size={16} />
             Gallery Manager
+          </Link>
+          <Link href="/admin/pricing" className="flex items-center gap-3 text-sm text-white/50 hover:text-white px-4 py-3 rounded-sm hover:bg-white/5 transition-colors">
+            <TrendingUp size={16} />
+            Pricing Manager
           </Link>
           <Link href="/admin/settings" className="flex items-center gap-3 text-sm text-white bg-white/10 px-4 py-3 rounded-sm border-l-2 border-[#C9A84C]">
             <Settings size={16} className="text-[#C9A84C]" />
