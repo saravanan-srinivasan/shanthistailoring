@@ -31,11 +31,15 @@ export async function POST(request: Request) {
     if (error) {
       console.error("Update error:", error);
     } else if (updatedOrder) {
-      // Trigger emails in background
-      Promise.all([
-        sendPaymentConfirmedAdminAlert(updatedOrder.customer_name, "Online UPI", `UTR: ${utr_number || "Not provided"}`),
-        sendPaymentReceiptCustomer(updatedOrder.customer_email, updatedOrder.customer_name, "Online UPI")
-      ]).catch(err => console.error("Email send failed:", err));
+      // Trigger emails and await them
+      try {
+        await Promise.all([
+          sendPaymentConfirmedAdminAlert(updatedOrder.customer_name, "Online UPI", `UTR: ${utr_number || "Not provided"}`),
+          sendPaymentReceiptCustomer(updatedOrder.customer_email, updatedOrder.customer_name, "Online UPI")
+        ]);
+      } catch (err) {
+        console.error("Email send failed:", err);
+      }
     }
 
     // Redirect back to checkout page to show success message

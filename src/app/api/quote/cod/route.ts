@@ -27,11 +27,15 @@ export async function POST(request: Request) {
     if (error) {
       console.error("Update error:", error);
     } else if (updatedOrder) {
-      // Trigger emails in background
-      Promise.all([
-        sendPaymentConfirmedAdminAlert(updatedOrder.customer_name, "Cash on Delivery", "No UTR - Payment due at pickup/delivery"),
-        sendPaymentReceiptCustomer(updatedOrder.customer_email, updatedOrder.customer_name, "Cash on Delivery")
-      ]).catch(err => console.error("Email send failed:", err));
+      // Trigger emails and await them
+      try {
+        await Promise.all([
+          sendPaymentConfirmedAdminAlert(updatedOrder.customer_name, "Cash on Delivery", "No UTR - Payment due at pickup/delivery"),
+          sendPaymentReceiptCustomer(updatedOrder.customer_email, updatedOrder.customer_name, "Cash on Delivery")
+        ]);
+      } catch (err) {
+        console.error("Email send failed:", err);
+      }
     }
 
     // Redirect back to checkout page

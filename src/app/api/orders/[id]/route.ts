@@ -82,7 +82,11 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 
     // Send rejection email if status is rejected
     if (status === 'rejected' && updatedOrder) {
-      sendOrderRejectedEmail(updatedOrder.customer_email, updatedOrder.customer_name).catch(console.error);
+      try {
+        await sendOrderRejectedEmail(updatedOrder.customer_email, updatedOrder.customer_name);
+      } catch (err) {
+        console.error("Email send failed:", err);
+      }
     }
 
     return NextResponse.json({ success: true, order: updatedOrder });

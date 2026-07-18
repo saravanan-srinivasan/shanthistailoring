@@ -30,11 +30,16 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: error?.message || "Failed to create order" }, { status: 500 });
     }
 
-    // Trigger emails in background (do not await so user doesn't wait)
-    Promise.all([
-      sendOnlineOrderAdminAlert(body.customer_name, body.garment_type, body.customer_email),
-      sendOnlineOrderCustomerConfirmation(body.customer_email, body.customer_name, body.garment_type)
-    ]).catch(err => console.error("Email send failed:", err));
+    // Trigger emails and await them so Vercel serverless doesn't kill the process early
+    try {
+      await Promise.all([
+        sendOnlineOrderAdminAlert(body.customer_name, body.garment_type, body.customer_email),
+        sendOnlineOrderCustomerConfirmation(body.customer_email, body.customer_name, body.garment_type)
+      ]);
+    } catch (err) {
+      console.error("Email send failed:", err);
+      // We still return success since the order was created
+    }
 
     return NextResponse.json({ success: true, order: data });
   } catch (err) {
