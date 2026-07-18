@@ -11,6 +11,7 @@ export default function OrderOnlinePage() {
   const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [uploadingImage, setUploadingImage] = useState(false)
   const supabase = createClient()
 
   // Form State
@@ -27,11 +28,32 @@ export default function OrderOnlinePage() {
       shoulder: '',
       armhole: '',
       length: ''
-    }
+    },
+    reference_images: [] as string[]
   })
 
   const handleNext = () => setStep(prev => prev + 1)
   const handleBack = () => setStep(prev => prev - 1)
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    
+    setUploadingImage(true)
+    const fileExt = file.name.split('.').pop()
+    const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`
+
+    const { error: uploadError } = await supabase.storage.from('order_references').upload(fileName, file)
+    if (uploadError) {
+      alert('Error uploading image: ' + uploadError.message)
+      setUploadingImage(false)
+      return
+    }
+
+    const { data } = supabase.storage.from('order_references').getPublicUrl(fileName)
+    setFormData(prev => ({ ...prev, reference_images: [...prev.reference_images, data.publicUrl] }))
+    setUploadingImage(false)
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -45,7 +67,7 @@ export default function OrderOnlinePage() {
         garment_type: formData.garment_type,
         fabric_choice: formData.fabric_choice,
         measurements: formData.measurements,
-        reference_images: ["https://example.com/placeholder-ref.jpg"], // Hardcoded for V1 until storage is setup
+        reference_images: formData.reference_images,
         status: 'pending',
       }
     ])
@@ -126,10 +148,20 @@ export default function OrderOnlinePage() {
 
                 <div>
                   <label className="block text-xs uppercase tracking-widest text-white/50 mb-2">Upload Reference Image (Optional)</label>
-                  <div className="border-2 border-dashed border-white/10 p-8 text-center text-white/30 cursor-not-allowed bg-black/20">
-                    <UploadCloud className="mx-auto mb-2 opacity-50" />
-                    <p className="text-sm">Image upload unlocking in Phase 2</p>
-                  </div>
+                  <label className={`block border-2 border-dashed ${uploadingImage ? 'border-[#C9A84C] bg-[#C9A84C]/10' : 'border-white/10 bg-white/5 hover:bg-white/10'} p-8 text-center cursor-pointer transition-colors`}>
+                    <input type="file" accept="image/*" onChange={handleImageUpload} disabled={uploadingImage} className="hidden" />
+                    <UploadCloud className={`mx-auto mb-2 ${uploadingImage ? 'text-[#C9A84C] animate-pulse' : 'text-white/50'}`} />
+                    <p className="text-sm text-white/80">{uploadingImage ? 'Uploading...' : 'Click to upload your design inspiration'}</p>
+                  </label>
+                  {formData.reference_images.length > 0 && (
+                    <div className="flex gap-2 mt-4 flex-wrap">
+                      {formData.reference_images.map((img, idx) => (
+                        <div key={idx} className="relative w-16 h-16 bg-[#1A1A1A] border border-white/20">
+                          <img src={img} alt="Ref" className="w-full h-full object-cover" />
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             </motion.div>

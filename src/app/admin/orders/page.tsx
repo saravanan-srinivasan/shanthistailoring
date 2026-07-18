@@ -116,6 +116,22 @@ export default function AdminOrdersPage() {
                   </div>
                 </div>
 
+                {order.reference_images && order.reference_images.length > 0 && (
+                  <div className="mt-8">
+                    <h4 className="text-xs uppercase tracking-widest text-white/50 mb-4">Reference Images</h4>
+                    <div className="flex gap-4 overflow-x-auto pb-4">
+                      {order.reference_images.map((img: string, idx: number) => (
+                        <div key={idx} className="relative min-w-[120px] h-[160px] bg-[#1A1A1A] border border-white/10 rounded-sm overflow-hidden">
+                          <img src={img} alt="Reference" className="w-full h-full object-cover" />
+                          <a href={img} target="_blank" rel="noopener noreferrer" className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <span className="text-xs uppercase tracking-widest border-b border-[#C9A84C] text-[#C9A84C] pb-0.5">View Full</span>
+                          </a>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 <div className="mt-8 pt-6 border-t border-white/10 flex gap-4">
                   <button className="bg-[#C9A84C] text-black px-6 py-2 text-xs uppercase tracking-widest font-medium hover:bg-[#E8C97A] transition-colors">
                     Send Quote (Phase 2)
