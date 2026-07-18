@@ -1,6 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
-import { LogOut, Calendar, Clock, User, Phone, Settings, Image as ImageIcon, TrendingUp, Users, MessageSquare } from 'lucide-react'
+import { LogOut, Calendar, Clock, User, Phone, Settings, Image as ImageIcon, TrendingUp, Users, MessageSquare, Package } from 'lucide-react'
 import Link from 'next/link'
 import StatusUpdater from './StatusUpdater'
 import DeleteButton from './DeleteButton'
@@ -48,6 +48,10 @@ export default async function AdminDashboard() {
           <Link href="/admin" className="flex items-center gap-3 text-sm text-white bg-white/10 px-4 py-3 rounded-sm border-l-2 border-[#C9A84C]">
             <Calendar size={16} className="text-[#C9A84C]" />
             Appointments
+          </Link>
+          <Link href="/admin/orders" className="flex items-center gap-3 text-sm text-white/50 hover:text-white px-4 py-3 rounded-sm hover:bg-white/5 transition-colors">
+            <Package size={16} />
+            Remote Orders
           </Link>
           <Link href="/admin/messages" className="flex items-center gap-3 text-sm text-white/50 hover:text-white px-4 py-3 rounded-sm hover:bg-white/5 transition-colors">
             <MessageSquare size={16} />
