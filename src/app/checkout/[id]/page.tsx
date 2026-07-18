@@ -52,7 +52,7 @@ export default async function CheckoutPage({ params }: { params: Promise<{ id: s
   // The UPI Intent Link
   const upiId = "s4shanthi1985-1@okaxis"
   const upiName = "Shanthi S"
-  const upiLink = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(upiName)}&am=${order.quote_price}&cu=INR`
+  const upiLink = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(upiName)}&am=${order.quote_price}&cu=INR&tn=Tailoring%20Order&tr=${order.id}`
 
   return (
     <main className="min-h-screen bg-[#0A0A0A] pt-32 pb-24 flex items-center justify-center">
