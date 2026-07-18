@@ -95,11 +95,11 @@ export async function sendAdminNotification(adminEmail: string, customerName: st
   }
 }
 
-export async function sendQuoteEmail(email: string, customerName: string, quotePrice: number, orderId: string) {
+export async function sendQuoteEmail(email: string, customerName: string, quotePrice: number, orderId: string, baseUrl: string) {
   const smtpUser = process.env.EMAIL_HOST_USER;
   const smtpPass = process.env.EMAIL_HOST_PASSWORD;
 
-  const checkoutUrl = `https://shanthitailoring.com/checkout/${orderId}`;
+  const checkoutUrl = `${baseUrl}/checkout/${orderId}`;
 
   const htmlContent = `
     <html>

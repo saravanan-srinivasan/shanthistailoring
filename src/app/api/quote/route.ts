@@ -39,7 +39,10 @@ export async function POST(request: Request) {
 
     // 3. Send email to customer
     if (order.customer_email) {
-      await sendQuoteEmail(order.customer_email, order.customer_name, parseFloat(quote_price), order_id);
+      const host = request.headers.get('host') || 'shanthitailoring.com';
+      const protocol = host.includes('localhost') ? 'http' : 'https';
+      const baseUrl = `${protocol}://${host}`;
+      await sendQuoteEmail(order.customer_email, order.customer_name, parseFloat(quote_price), order_id, baseUrl);
     }
 
     return NextResponse.json({ success: true });
