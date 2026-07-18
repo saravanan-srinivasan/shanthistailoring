@@ -2,6 +2,8 @@ import { createClient } from '@/utils/supabase/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 
+export const dynamic = 'force-dynamic'
+
 export default async function CheckoutPage({ params }: { params: { id: string } }) {
   const supabase = await createClient()
 
