@@ -145,8 +145,8 @@ export default function HeroSection() {
                 transition={{ duration: 0.8, delay: 1.25 }}
                 className="flex flex-wrap gap-4"
               >
-                <Link href="/appointment"><button className="btn-gold">Private Consultation</button></Link>
-                <Link href="/gallery"><button className="btn-ghost">Explore Collections</button></Link>
+                <Link href="/appointment"><button className="btn-gold">Visit Atelier (Chennai)</button></Link>
+                <Link href="/order-online"><button className="btn-ghost text-[#C9A84C] border-[#C9A84C]/50 hover:bg-[#C9A84C]/10">Order Online (India-wide)</button></Link>
               </motion.div>
             </div>
           </div>

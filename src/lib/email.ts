@@ -94,3 +94,52 @@ export async function sendAdminNotification(adminEmail: string, customerName: st
     return false;
   }
 }
+
+export async function sendQuoteEmail(email: string, customerName: string, quotePrice: number, orderId: string) {
+  const smtpUser = process.env.EMAIL_HOST_USER;
+  const smtpPass = process.env.EMAIL_HOST_PASSWORD;
+
+  const checkoutUrl = `https://shanthitailoring.com/checkout/${orderId}`;
+
+  const htmlContent = `
+    <html>
+      <body style="font-family: Arial, sans-serif; color: #333; max-width: 600px; padding: 20px;">
+        <h2 style="color: #C9A84C;">Your Custom Design Quote is Ready!</h2>
+        <p>Dear ${customerName},</p>
+        <p>Our master tailors have reviewed your measurements and reference photos. We are thrilled to bring your design to life!</p>
+        <p><strong>Total Quotation:</strong> ₹${quotePrice}</p>
+        <p>To confirm your order and begin production, please complete your secure zero-fee UPI payment by clicking the link below:</p>
+        <br/>
+        <a href="${checkoutUrl}" style="background-color: #C9A84C; color: #000; padding: 12px 24px; text-decoration: none; font-weight: bold; border-radius: 4px; display: inline-block;">Proceed to Payment</a>
+        <br/><br/>
+        <p>Warm regards,<br/>The Shanthi Team</p>
+      </body>
+    </html>
+  `;
+
+  if (!smtpUser || !smtpPass) {
+    console.log("MOCK QUOTE EMAIL SENT to " + email);
+    console.log("Checkout Link: " + checkoutUrl);
+    return true;
+  }
+
+  try {
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
+      auth: { user: smtpUser, pass: smtpPass },
+    });
+
+    await transporter.sendMail({
+      from: `"Shanthi's Tailoring" <${smtpUser}>`,
+      to: email,
+      subject: "Your Custom Design Quote - Shanthi's",
+      html: htmlContent,
+    });
+    return true;
+  } catch (error) {
+    console.error("Failed to send quote email:", error);
+    return false;
+  }
+}

@@ -8,6 +8,9 @@ import Link from 'next/link'
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [activeQuoteId, setActiveQuoteId] = useState<string | null>(null)
+  const [quotePrice, setQuotePrice] = useState('')
+  const [submittingQuote, setSubmittingQuote] = useState(false)
   const supabase = createClient()
 
   useEffect(() => {
@@ -22,6 +25,31 @@ export default function AdminOrdersPage() {
     
     if (data) setOrders(data)
     setLoading(false)
+  }
+
+  const handleSendQuote = async (orderId: string) => {
+    if (!quotePrice) return alert("Please enter a quote price")
+    setSubmittingQuote(true)
+
+    try {
+      const res = await fetch('/api/quote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ order_id: orderId, quote_price: quotePrice })
+      })
+      
+      if (res.ok) {
+        alert("Quote sent successfully!")
+        setActiveQuoteId(null)
+        setQuotePrice('')
+        fetchOrders() // refresh list
+      } else {
+        alert("Failed to send quote")
+      }
+    } catch (e) {
+      console.error(e)
+    }
+    setSubmittingQuote(false)
   }
 
   return (
@@ -132,10 +160,47 @@ export default function AdminOrdersPage() {
                   </div>
                 )}
 
-                <div className="mt-8 pt-6 border-t border-white/10 flex gap-4">
-                  <button className="bg-[#C9A84C] text-black px-6 py-2 text-xs uppercase tracking-widest font-medium hover:bg-[#E8C97A] transition-colors">
-                    Send Quote (Phase 2)
-                  </button>
+                <div className="mt-8 pt-6 border-t border-white/10 flex flex-col items-start gap-4">
+                  {activeQuoteId === order.id ? (
+                    <div className="flex gap-2 w-full md:w-auto">
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/50 text-sm">₹</span>
+                        <input 
+                          type="number" 
+                          value={quotePrice}
+                          onChange={(e) => setQuotePrice(e.target.value)}
+                          placeholder="Amount" 
+                          className="bg-[#1A1A1A] border border-white/10 pl-8 pr-4 py-2 text-white text-sm outline-none focus:border-[#C9A84C]"
+                        />
+                      </div>
+                      <button 
+                        onClick={() => handleSendQuote(order.id)} 
+                        disabled={submittingQuote}
+                        className="bg-[#C9A84C] text-black px-6 py-2 text-xs uppercase tracking-widest font-medium hover:bg-[#E8C97A] transition-colors"
+                      >
+                        {submittingQuote ? 'Sending...' : 'Confirm Quote'}
+                      </button>
+                      <button 
+                        onClick={() => {setActiveQuoteId(null); setQuotePrice('');}}
+                        className="border border-white/20 text-white px-4 py-2 text-xs uppercase tracking-widest font-medium hover:bg-white/5 transition-colors"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  ) : order.status === 'pending' ? (
+                    <button 
+                      onClick={() => setActiveQuoteId(order.id)}
+                      className="bg-[#C9A84C] text-black px-6 py-2 text-xs uppercase tracking-widest font-medium hover:bg-[#E8C97A] transition-colors"
+                    >
+                      Send Price Quote
+                    </button>
+                  ) : order.status === 'quoted' ? (
+                    <p className="text-white/50 text-sm italic">Quoted: ₹{order.quote_price}. Awaiting payment.</p>
+                  ) : order.status === 'paid' ? (
+                    <p className="text-green-400 text-sm font-medium uppercase tracking-widest">Payment Completed</p>
+                  ) : (
+                    <p className="text-white/50 text-sm italic capitalize">Status: {order.status}</p>
+                  )}
                 </div>
               </div>
             ))}
