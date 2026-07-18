@@ -99,10 +99,21 @@ export default async function CheckoutPage({ params }: { params: Promise<{ id: s
               </a>
 
               <div className="pt-6">
-                <p className="text-white/40 text-xs mb-3">If paying from a laptop, scan the QR code in your UPI app, then click below.</p>
-                <form action="/api/quote/paid" method="POST">
+                <p className="text-white/40 text-xs mb-3">After paying, enter your 12-digit UTR (Transaction ID) to confirm.</p>
+                <form action="/api/quote/paid" method="POST" className="flex flex-col gap-3">
                   <input type="hidden" name="order_id" value={order.id} />
-                  <button type="submit" className="border border-white/20 text-white w-full py-3 text-xs uppercase tracking-widest hover:bg-white/5 transition-colors">
+                  <input 
+                    type="text" 
+                    name="utr_number" 
+                    placeholder="Enter 12-digit UTR Number" 
+                    required 
+                    minLength={12} 
+                    maxLength={12}
+                    pattern="\d{12}"
+                    title="Please enter exactly 12 digits"
+                    className="bg-[#1A1A1A] border border-white/10 px-4 py-3 text-white text-sm outline-none focus:border-[#C9A84C] w-full text-center tracking-widest"
+                  />
+                  <button type="submit" className="border border-[#C9A84C]/50 text-[#C9A84C] w-full py-3 text-xs uppercase tracking-widest hover:bg-[#C9A84C]/10 transition-colors">
                     I have completed the payment
                   </button>
                 </form>

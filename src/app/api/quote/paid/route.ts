@@ -9,15 +9,19 @@ export async function POST(request: Request) {
   try {
     const formData = await request.formData();
     const order_id = formData.get('order_id');
+    const utr_number = formData.get('utr_number');
 
     if (!order_id) {
       return NextResponse.redirect(new URL('/', request.url));
     }
 
     // Update order status to paid
+    const updateData: any = { status: 'paid' };
+    if (utr_number) updateData.utr_number = utr_number;
+
     const { error } = await supabase
       .from('online_orders')
-      .update({ status: 'paid' })
+      .update(updateData)
       .eq('id', order_id);
 
     if (error) {
