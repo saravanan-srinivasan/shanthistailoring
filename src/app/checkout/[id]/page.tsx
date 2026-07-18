@@ -95,10 +95,21 @@ export default async function CheckoutPage({ params }: { params: Promise<{ id: s
                 href={upiLink}
                 className="block w-full bg-[#C9A84C] text-black py-4 px-6 uppercase tracking-widest text-sm font-medium hover:bg-[#E8C97A] transition-colors"
               >
-                Pay ₹{order.quote_price} via UPI
+                Pay ₹{order.quote_price} via UPI App
               </a>
 
-              <div className="pt-6">
+              <div className="pt-8 pb-4 border-t border-white/10 mt-8">
+                <p className="text-white/60 text-sm mb-4">Or scan this QR code from any UPI app (GPay, PhonePe, Paytm):</p>
+                <div className="flex justify-center mb-6">
+                  <div className="bg-white p-4 rounded-sm">
+                    <img 
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiLink)}`} 
+                      alt="UPI QR Code" 
+                      className="w-[200px] h-[200px]"
+                    />
+                  </div>
+                </div>
+                
                 <p className="text-white/40 text-xs mb-3">After paying, enter your 12-digit UTR (Transaction ID) to confirm.</p>
                 <form action="/api/quote/paid" method="POST" className="flex flex-col gap-3">
                   <input type="hidden" name="order_id" value={order.id} />
