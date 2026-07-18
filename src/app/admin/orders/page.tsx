@@ -11,6 +11,7 @@ export default function AdminOrdersPage() {
   const [activeQuoteId, setActiveQuoteId] = useState<string | null>(null)
   const [quotePrice, setQuotePrice] = useState('')
   const [submittingQuote, setSubmittingQuote] = useState(false)
+  const [deletingOrderId, setDeletingOrderId] = useState<string | null>(null)
   const supabase = createClient()
 
   useEffect(() => {
@@ -50,6 +51,24 @@ export default function AdminOrdersPage() {
       console.error(e)
     }
     setSubmittingQuote(false)
+  }
+
+  const handleDeleteOrder = async (orderId: string) => {
+    if (!confirm("Are you sure you want to delete this order? This cannot be undone.")) return;
+    
+    setDeletingOrderId(orderId)
+    const { error } = await supabase
+      .from('online_orders')
+      .delete()
+      .eq('id', orderId)
+
+    if (error) {
+      console.error(error)
+      alert("Failed to delete order")
+    } else {
+      fetchOrders()
+    }
+    setDeletingOrderId(null)
   }
 
   return (
@@ -195,11 +214,31 @@ export default function AdminOrdersPage() {
                       Send Price Quote
                     </button>
                   ) : order.status === 'quoted' ? (
-                    <p className="text-white/50 text-sm italic">Quoted: ₹{order.quote_price}. Awaiting payment.</p>
+                    <div className="flex items-center gap-4 w-full justify-between md:justify-start">
+                      <p className="text-white/50 text-sm italic">Quoted: ₹{order.quote_price}. Awaiting payment.</p>
+                      <button onClick={() => handleDeleteOrder(order.id)} disabled={deletingOrderId === order.id} className="text-red-500/50 hover:text-red-500 text-xs tracking-widest uppercase transition-colors">
+                        {deletingOrderId === order.id ? 'Deleting...' : 'Delete'}
+                      </button>
+                    </div>
                   ) : order.status === 'paid' ? (
-                    <p className="text-green-400 text-sm font-medium uppercase tracking-widest">Payment Completed</p>
+                    <div className="flex items-center gap-4 w-full justify-between md:justify-start">
+                      <p className="text-green-400 text-sm font-medium uppercase tracking-widest">Payment Completed</p>
+                      <button onClick={() => handleDeleteOrder(order.id)} disabled={deletingOrderId === order.id} className="text-red-500/50 hover:text-red-500 text-xs tracking-widest uppercase transition-colors">
+                        {deletingOrderId === order.id ? 'Deleting...' : 'Delete'}
+                      </button>
+                    </div>
                   ) : (
-                    <p className="text-white/50 text-sm italic capitalize">Status: {order.status}</p>
+                    <div className="flex items-center gap-4 w-full justify-between md:justify-start">
+                      <p className="text-white/50 text-sm italic capitalize">Status: {order.status}</p>
+                      <button onClick={() => handleDeleteOrder(order.id)} disabled={deletingOrderId === order.id} className="text-red-500/50 hover:text-red-500 text-xs tracking-widest uppercase transition-colors">
+                        {deletingOrderId === order.id ? 'Deleting...' : 'Delete'}
+                      </button>
+                    </div>
+                  )}
+                  {order.status === 'pending' && activeQuoteId !== order.id && (
+                    <button onClick={() => handleDeleteOrder(order.id)} disabled={deletingOrderId === order.id} className="text-red-500/50 hover:text-red-500 text-xs tracking-widest uppercase transition-colors mt-2">
+                      {deletingOrderId === order.id ? 'Deleting...' : 'Delete Order'}
+                    </button>
                   )}
                 </div>
               </div>
