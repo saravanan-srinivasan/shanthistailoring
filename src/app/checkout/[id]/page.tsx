@@ -13,8 +13,39 @@ export default async function CheckoutPage({ params }: { params: { id: string } 
     .eq('id', params.id)
     .single()
 
-  if (error || !order || order.status === 'pending') {
-    return notFound()
+  if (error) {
+    return (
+      <main className="min-h-screen bg-[#0A0A0A] pt-32 pb-24 flex items-center justify-center text-white text-center">
+        <div>
+          <h1 className="text-2xl text-red-500 mb-4">Database Error</h1>
+          <p>{error.message}</p>
+          <p className="text-xs text-white/50 mt-4">ID: {params.id}</p>
+        </div>
+      </main>
+    )
+  }
+
+  if (!order) {
+    return (
+      <main className="min-h-screen bg-[#0A0A0A] pt-32 pb-24 flex items-center justify-center text-white text-center">
+        <div>
+          <h1 className="text-2xl text-red-500 mb-4">Order Not Found</h1>
+          <p>Could not find order with ID: {params.id}</p>
+        </div>
+      </main>
+    )
+  }
+
+  if (order.status === 'pending') {
+    return (
+      <main className="min-h-screen bg-[#0A0A0A] pt-32 pb-24 flex items-center justify-center text-white text-center">
+        <div>
+          <h1 className="text-2xl text-yellow-500 mb-4">Order Still Pending</h1>
+          <p>The database says this order's status is still pending.</p>
+          <p className="text-xs text-white/50 mt-4">This means the API update failed or caching is still active.</p>
+        </div>
+      </main>
+    )
   }
 
   // The UPI Intent Link
