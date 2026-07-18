@@ -220,6 +220,13 @@ export default function AdminOrdersPage() {
                         {deletingOrderId === order.id ? 'Deleting...' : 'Delete'}
                       </button>
                     </div>
+                  ) : order.status === 'cod' ? (
+                    <div className="flex items-center gap-4 w-full justify-between md:justify-start">
+                      <p className="text-[#C9A84C] text-sm font-medium uppercase tracking-widest">Pay on Delivery</p>
+                      <button onClick={() => handleDeleteOrder(order.id)} disabled={deletingOrderId === order.id} className="text-red-500/50 hover:text-red-500 text-xs tracking-widest uppercase transition-colors">
+                        {deletingOrderId === order.id ? 'Deleting...' : 'Delete'}
+                      </button>
+                    </div>
                   ) : order.status === 'paid' ? (
                     <div className="flex flex-col gap-2 w-full">
                       <div className="flex items-center gap-4 justify-between md:justify-start">

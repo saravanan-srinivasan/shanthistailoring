@@ -85,21 +85,16 @@ export default async function CheckoutPage({ params }: { params: Promise<{ id: s
               <h2 className="text-green-400 text-xl font-medium mb-2">Payment Received</h2>
               <p className="text-green-400/80 text-sm">Your order is now in production! We will contact you once it is ready to ship.</p>
             </div>
+          ) : order.status === 'cod' ? (
+            <div className="bg-[#C9A84C]/10 border border-[#C9A84C]/20 p-6">
+              <h2 className="text-[#C9A84C] text-xl font-medium mb-2">Pay on Delivery Confirmed</h2>
+              <p className="text-[#C9A84C]/80 text-sm">Your order is now in production! Please keep cash or UPI ready at the time of delivery.</p>
+            </div>
           ) : (
-            <div className="space-y-6">
-              <p className="text-white/60 text-sm leading-relaxed mb-6">
-                Pay securely with 0% transaction fees via UPI. Tap the button below on your mobile device to open GPay, PhonePe, or Paytm automatically.
-              </p>
+            <div className="space-y-8">
               
-              <a 
-                href={upiLink}
-                className="block w-full bg-[#C9A84C] text-black py-4 px-6 uppercase tracking-widest text-sm font-medium hover:bg-[#E8C97A] transition-colors"
-              >
-                Pay ₹{order.quote_price} via UPI App
-              </a>
-
-              <div className="pt-8 pb-4 border-t border-white/10 mt-8">
-                <p className="text-white/60 text-sm mb-4">Or scan this QR code from any UPI app (GPay, PhonePe, Paytm):</p>
+              <div className="pt-2">
+                <p className="text-white/80 text-sm mb-4">Option 1: Pay Online via UPI (0% Fees)</p>
                 <div className="flex justify-center mb-6">
                   <div className="bg-white p-4 rounded-sm">
                     <img 
@@ -110,7 +105,7 @@ export default async function CheckoutPage({ params }: { params: Promise<{ id: s
                   </div>
                 </div>
                 
-                <p className="text-white/40 text-xs mb-3">After paying, enter your 12-digit UTR (Transaction ID) to confirm.</p>
+                <p className="text-white/40 text-xs mb-3">After scanning and paying, enter your 12-digit UTR (Transaction ID) to confirm.</p>
                 <form action="/api/quote/paid" method="POST" className="flex flex-col gap-3">
                   <input type="hidden" name="order_id" value={order.id} />
                   <input 
@@ -126,6 +121,22 @@ export default async function CheckoutPage({ params }: { params: Promise<{ id: s
                   />
                   <button type="submit" className="border border-[#C9A84C]/50 text-[#C9A84C] w-full py-3 text-xs uppercase tracking-widest hover:bg-[#C9A84C]/10 transition-colors">
                     I have completed the payment
+                  </button>
+                </form>
+              </div>
+
+              <div className="relative flex py-4 items-center">
+                <div className="flex-grow border-t border-white/10"></div>
+                <span className="flex-shrink-0 mx-4 text-white/30 text-xs uppercase tracking-widest">OR</span>
+                <div className="flex-grow border-t border-white/10"></div>
+              </div>
+
+              <div className="pb-4">
+                <p className="text-white/80 text-sm mb-4">Option 2: Pay on Delivery</p>
+                <form action="/api/quote/cod" method="POST">
+                  <input type="hidden" name="order_id" value={order.id} />
+                  <button type="submit" className="w-full bg-white/10 text-white py-4 px-6 uppercase tracking-widest text-sm font-medium hover:bg-white/20 transition-colors">
+                    Pay on Delivery
                   </button>
                 </form>
               </div>
