@@ -4,13 +4,14 @@ import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
 
-export default async function CheckoutPage({ params }: { params: { id: string } }) {
+export default async function CheckoutPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const supabase = await createClient()
 
   const { data: order, error } = await supabase
     .from('online_orders')
     .select('*')
-    .eq('id', params.id)
+    .eq('id', id)
     .single()
 
   if (error) {
@@ -19,7 +20,7 @@ export default async function CheckoutPage({ params }: { params: { id: string } 
         <div>
           <h1 className="text-2xl text-red-500 mb-4">Database Error</h1>
           <p>{error.message}</p>
-          <p className="text-xs text-white/50 mt-4">ID: {params.id}</p>
+          <p className="text-xs text-white/50 mt-4">ID: {id}</p>
         </div>
       </main>
     )
@@ -30,7 +31,7 @@ export default async function CheckoutPage({ params }: { params: { id: string } 
       <main className="min-h-screen bg-[#0A0A0A] pt-32 pb-24 flex items-center justify-center text-white text-center">
         <div>
           <h1 className="text-2xl text-red-500 mb-4">Order Not Found</h1>
-          <p>Could not find order with ID: {params.id}</p>
+          <p>Could not find order with ID: {id}</p>
         </div>
       </main>
     )
