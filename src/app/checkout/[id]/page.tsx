@@ -90,6 +90,21 @@ export default async function CheckoutPage({ params }: { params: Promise<{ id: s
               <h2 className="text-[#C9A84C] text-xl font-medium mb-2">Pay on Delivery Confirmed</h2>
               <p className="text-[#C9A84C]/80 text-sm">Your order is now in production! Please keep cash or UPI ready at the time of delivery.</p>
             </div>
+          ) : order.status === 'ready' ? (
+            <div className="bg-blue-500/10 border border-blue-500/20 p-6">
+              <h2 className="text-blue-400 text-xl font-medium mb-2">Ready for Pickup / Delivery</h2>
+              <p className="text-blue-400/80 text-sm">Your masterpiece is finished! Please visit the atelier to collect it, or wait for delivery.</p>
+            </div>
+          ) : order.status === 'delivered' ? (
+            <div className="bg-white/10 border border-white/20 p-6">
+              <h2 className="text-white/80 text-xl font-medium mb-2">Order Delivered</h2>
+              <p className="text-white/50 text-sm">This order has been completed and delivered.</p>
+            </div>
+          ) : order.status === 'rejected' ? (
+            <div className="bg-red-500/10 border border-red-500/20 p-6">
+              <h2 className="text-red-400 text-xl font-medium mb-2">Order Cancelled</h2>
+              <p className="text-red-400/80 text-sm">We are unable to fulfill this design request at this time. Please contact us for more information.</p>
+            </div>
           ) : (
             <div className="space-y-8">
               

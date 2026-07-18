@@ -36,9 +36,12 @@ export default function TrackOrderPage() {
   };
 
   const getStageIndex = (status: string) => {
-    // If status is "confirmed", map it to "Pending" since we just migrated
-    if (status === "confirmed" || status === "pending") return 0;
-    const index = STAGES.findIndex(s => s.toLowerCase() === status.toLowerCase());
+    const s = status.toLowerCase();
+    if (s === "confirmed" || s === "pending" || s === "quoted") return 0;
+    if (s === "paid" || s === "cod" || s === "ready") return 1;
+    if (s === "delivered") return 2;
+    
+    const index = STAGES.findIndex(stage => stage.toLowerCase() === s);
     return index === -1 ? 0 : index;
   };
 

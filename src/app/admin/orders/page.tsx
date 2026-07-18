@@ -57,18 +57,38 @@ export default function AdminOrdersPage() {
     if (!confirm("Are you sure you want to delete this order? This cannot be undone.")) return;
     
     setDeletingOrderId(orderId)
-    const { error } = await supabase
-      .from('online_orders')
-      .delete()
-      .eq('id', orderId)
-
-    if (error) {
-      console.error(error)
+    try {
+      const res = await fetch(`/api/orders/${orderId}`, {
+        method: 'DELETE',
+      })
+      if (res.ok) {
+        fetchOrders()
+      } else {
+        alert("Failed to delete order")
+      }
+    } catch (e) {
+      console.error(e)
       alert("Failed to delete order")
-    } else {
-      fetchOrders()
     }
     setDeletingOrderId(null)
+  }
+
+  const handleUpdateStatus = async (orderId: string, status: string) => {
+    try {
+      const res = await fetch(`/api/orders/${orderId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+      })
+      if (res.ok) {
+        fetchOrders()
+      } else {
+        alert("Failed to update status")
+      }
+    } catch (e) {
+      console.error(e)
+      alert("Failed to update status")
+    }
   }
 
   return (
@@ -207,12 +227,20 @@ export default function AdminOrdersPage() {
                       </button>
                     </div>
                   ) : order.status === 'pending' ? (
-                    <button 
-                      onClick={() => setActiveQuoteId(order.id)}
-                      className="bg-[#C9A84C] text-black px-6 py-2 text-xs uppercase tracking-widest font-medium hover:bg-[#E8C97A] transition-colors"
-                    >
-                      Send Price Quote
-                    </button>
+                    <div className="flex gap-4">
+                      <button 
+                        onClick={() => setActiveQuoteId(order.id)}
+                        className="bg-[#C9A84C] text-black px-6 py-2 text-xs uppercase tracking-widest font-medium hover:bg-[#E8C97A] transition-colors"
+                      >
+                        Send Price Quote
+                      </button>
+                      <button 
+                        onClick={() => handleUpdateStatus(order.id, 'rejected')}
+                        className="border border-white/20 text-white px-4 py-2 text-xs uppercase tracking-widest font-medium hover:bg-white/5 transition-colors"
+                      >
+                        Reject
+                      </button>
+                    </div>
                   ) : order.status === 'quoted' ? (
                     <div className="flex items-center gap-4 w-full justify-between md:justify-start">
                       <p className="text-white/50 text-sm italic">Quoted: ₹{order.quote_price}. Awaiting payment.</p>
@@ -220,17 +248,12 @@ export default function AdminOrdersPage() {
                         {deletingOrderId === order.id ? 'Deleting...' : 'Delete'}
                       </button>
                     </div>
-                  ) : order.status === 'cod' ? (
-                    <div className="flex items-center gap-4 w-full justify-between md:justify-start">
-                      <p className="text-[#C9A84C] text-sm font-medium uppercase tracking-widest">Pay on Delivery</p>
-                      <button onClick={() => handleDeleteOrder(order.id)} disabled={deletingOrderId === order.id} className="text-red-500/50 hover:text-red-500 text-xs tracking-widest uppercase transition-colors">
-                        {deletingOrderId === order.id ? 'Deleting...' : 'Delete'}
-                      </button>
-                    </div>
-                  ) : order.status === 'paid' ? (
+                  ) : order.status === 'cod' || order.status === 'paid' ? (
                     <div className="flex flex-col gap-2 w-full">
                       <div className="flex items-center gap-4 justify-between md:justify-start">
-                        <p className="text-green-400 text-sm font-medium uppercase tracking-widest">Payment Completed</p>
+                        <p className={order.status === 'paid' ? "text-green-400 text-sm font-medium uppercase tracking-widest" : "text-[#C9A84C] text-sm font-medium uppercase tracking-widest"}>
+                          {order.status === 'paid' ? 'Payment Completed' : 'Pay on Delivery'}
+                        </p>
                         <button onClick={() => handleDeleteOrder(order.id)} disabled={deletingOrderId === order.id} className="text-red-500/50 hover:text-red-500 text-xs tracking-widest uppercase transition-colors">
                           {deletingOrderId === order.id ? 'Deleting...' : 'Delete'}
                         </button>
@@ -238,6 +261,21 @@ export default function AdminOrdersPage() {
                       {order.utr_number && (
                         <p className="text-white/50 text-xs tracking-widest">UTR: {order.utr_number}</p>
                       )}
+                      <button onClick={() => handleUpdateStatus(order.id, 'ready')} className="mt-2 self-start bg-white/10 border border-white/20 text-white px-4 py-2 text-xs uppercase tracking-widest font-medium hover:bg-white/20 transition-colors">
+                        Mark Ready for Pickup
+                      </button>
+                    </div>
+                  ) : order.status === 'ready' ? (
+                    <div className="flex flex-col gap-2 w-full">
+                      <div className="flex items-center gap-4 justify-between md:justify-start">
+                        <p className="text-white text-sm font-medium uppercase tracking-widest">Ready for Pickup</p>
+                        <button onClick={() => handleDeleteOrder(order.id)} disabled={deletingOrderId === order.id} className="text-red-500/50 hover:text-red-500 text-xs tracking-widest uppercase transition-colors">
+                          {deletingOrderId === order.id ? 'Deleting...' : 'Delete'}
+                        </button>
+                      </div>
+                      <button onClick={() => handleUpdateStatus(order.id, 'delivered')} className="mt-2 self-start bg-green-500/20 border border-green-500/50 text-green-400 px-4 py-2 text-xs uppercase tracking-widest font-medium hover:bg-green-500/30 transition-colors">
+                        Mark Delivered
+                      </button>
                     </div>
                   ) : (
                     <div className="flex items-center gap-4 w-full justify-between md:justify-start">
@@ -246,11 +284,6 @@ export default function AdminOrdersPage() {
                         {deletingOrderId === order.id ? 'Deleting...' : 'Delete'}
                       </button>
                     </div>
-                  )}
-                  {order.status === 'pending' && activeQuoteId !== order.id && (
-                    <button onClick={() => handleDeleteOrder(order.id)} disabled={deletingOrderId === order.id} className="text-red-500/50 hover:text-red-500 text-xs tracking-widest uppercase transition-colors mt-2">
-                      {deletingOrderId === order.id ? 'Deleting...' : 'Delete Order'}
-                    </button>
                   )}
                 </div>
               </div>

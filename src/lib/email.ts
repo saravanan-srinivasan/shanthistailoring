@@ -143,3 +143,123 @@ export async function sendQuoteEmail(email: string, customerName: string, quoteP
     return false;
   }
 }
+
+// -------------------------------------------------------------
+// NEW NOTIFICATION FUNCTIONS
+// -------------------------------------------------------------
+
+export async function sendOnlineOrderAdminAlert(customerName: string, garmentType: string, email: string) {
+  const smtpUser = process.env.EMAIL_HOST_USER;
+  const smtpPass = process.env.EMAIL_HOST_PASSWORD;
+  
+  const htmlContent = `
+    <html>
+      <body style="font-family: Arial, sans-serif; color: #333; max-width: 600px; padding: 20px;">
+        <h2 style="color: #222;">🚨 NEW ONLINE ORDER</h2>
+        <p><strong>Customer:</strong> ${customerName}</p>
+        <p><strong>Garment Type:</strong> ${garmentType}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><br/>Please check the Admin Portal Remote Orders tab to review measurements and send a quote!</p>
+      </body>
+    </html>
+  `;
+
+  if (!smtpUser || !smtpPass) return true;
+  try {
+    const transporter = nodemailer.createTransport({ host: 'smtp.gmail.com', port: 465, secure: true, auth: { user: smtpUser, pass: smtpPass } });
+    await transporter.sendMail({ from: `"Shanthi's Website" <${smtpUser}>`, to: smtpUser, subject: `🚨 New Order: ${garmentType} from ${customerName}`, html: htmlContent });
+  } catch (error) { console.error(error); }
+}
+
+export async function sendOnlineOrderCustomerConfirmation(email: string, customerName: string, garmentType: string) {
+  const smtpUser = process.env.EMAIL_HOST_USER;
+  const smtpPass = process.env.EMAIL_HOST_PASSWORD;
+  
+  const htmlContent = `
+    <html>
+      <body style="font-family: Arial, sans-serif; color: #333; max-width: 600px; padding: 20px;">
+        <h2 style="color: #C9A84C;">Measurements Received!</h2>
+        <p>Dear ${customerName},</p>
+        <p>Thank you for submitting your custom measurements for your <strong>${garmentType}</strong>.</p>
+        <p>Our master tailor is currently reviewing your profile and reference images. We will email you a custom quotation shortly.</p>
+        <p>Warm regards,<br/>The Shanthi Team</p>
+      </body>
+    </html>
+  `;
+
+  if (!smtpUser || !smtpPass) return true;
+  try {
+    const transporter = nodemailer.createTransport({ host: 'smtp.gmail.com', port: 465, secure: true, auth: { user: smtpUser, pass: smtpPass } });
+    await transporter.sendMail({ from: `"Shanthi's Tailoring" <${smtpUser}>`, to: email, subject: "We received your measurements!", html: htmlContent });
+  } catch (error) { console.error(error); }
+}
+
+export async function sendPaymentConfirmedAdminAlert(customerName: string, paymentType: string, detail: string) {
+  const smtpUser = process.env.EMAIL_HOST_USER;
+  const smtpPass = process.env.EMAIL_HOST_PASSWORD;
+  
+  const htmlContent = `
+    <html>
+      <body style="font-family: Arial, sans-serif; color: #333; max-width: 600px; padding: 20px;">
+        <h2 style="color: #222;">💰 PAYMENT ALERT</h2>
+        <p><strong>Customer:</strong> ${customerName}</p>
+        <p><strong>Type:</strong> ${paymentType}</p>
+        <p><strong>Details:</strong> ${detail}</p>
+        <p><br/>You can now begin production on this order!</p>
+      </body>
+    </html>
+  `;
+
+  if (!smtpUser || !smtpPass) return true;
+  try {
+    const transporter = nodemailer.createTransport({ host: 'smtp.gmail.com', port: 465, secure: true, auth: { user: smtpUser, pass: smtpPass } });
+    await transporter.sendMail({ from: `"Shanthi's Website" <${smtpUser}>`, to: smtpUser, subject: `💰 Payment Alert: ${customerName}`, html: htmlContent });
+  } catch (error) { console.error(error); }
+}
+
+export async function sendPaymentReceiptCustomer(email: string, customerName: string, paymentType: string) {
+  const smtpUser = process.env.EMAIL_HOST_USER;
+  const smtpPass = process.env.EMAIL_HOST_PASSWORD;
+  
+  const htmlContent = `
+    <html>
+      <body style="font-family: Arial, sans-serif; color: #333; max-width: 600px; padding: 20px;">
+        <h2 style="color: #C9A84C;">Order Confirmed</h2>
+        <p>Dear ${customerName},</p>
+        <p>Your payment details (${paymentType}) have been received successfully!</p>
+        <p>We are officially beginning production on your custom garment. We will notify you as soon as it is ready.</p>
+        <p>Warm regards,<br/>The Shanthi Team</p>
+      </body>
+    </html>
+  `;
+
+  if (!smtpUser || !smtpPass) return true;
+  try {
+    const transporter = nodemailer.createTransport({ host: 'smtp.gmail.com', port: 465, secure: true, auth: { user: smtpUser, pass: smtpPass } });
+    await transporter.sendMail({ from: `"Shanthi's Tailoring" <${smtpUser}>`, to: email, subject: "Order Confirmed - Production Started!", html: htmlContent });
+  } catch (error) { console.error(error); }
+}
+
+export async function sendOrderRejectedEmail(email: string, customerName: string) {
+  const smtpUser = process.env.EMAIL_HOST_USER;
+  const smtpPass = process.env.EMAIL_HOST_PASSWORD;
+  
+  const htmlContent = `
+    <html>
+      <body style="font-family: Arial, sans-serif; color: #333; max-width: 600px; padding: 20px;">
+        <h2 style="color: #C9A84C;">Update regarding your design request</h2>
+        <p>Dear ${customerName},</p>
+        <p>Thank you for submitting your custom design request.</p>
+        <p>After careful review of the measurements and reference images, our master tailor has determined that we cannot fulfill this specific design to our quality standards at this time.</p>
+        <p>We apologize for any inconvenience and hope to serve you in the future.</p>
+        <p>Warm regards,<br/>The Shanthi Team</p>
+      </body>
+    </html>
+  `;
+
+  if (!smtpUser || !smtpPass) return true;
+  try {
+    const transporter = nodemailer.createTransport({ host: 'smtp.gmail.com', port: 465, secure: true, auth: { user: smtpUser, pass: smtpPass } });
+    await transporter.sendMail({ from: `"Shanthi's Tailoring" <${smtpUser}>`, to: email, subject: "Update regarding your design request", html: htmlContent });
+  } catch (error) { console.error(error); }
+}

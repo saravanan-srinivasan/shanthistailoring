@@ -59,23 +59,22 @@ export default function OrderOnlinePage() {
     e.preventDefault()
     setLoading(true)
     
-    const { error } = await supabase.from('online_orders').insert([
-      {
-        customer_name: formData.customer_name,
-        customer_email: formData.customer_email,
-        customer_phone: formData.customer_phone,
-        garment_type: formData.garment_type,
-        fabric_choice: formData.fabric_choice,
-        measurements: formData.measurements,
-        reference_images: formData.reference_images,
-        status: 'pending',
+    try {
+      const res = await fetch('/api/orders/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+      
+      const data = await res.json()
+      
+      if (!res.ok) {
+        alert("Error submitting order: " + (data.error || "Unknown error"))
+      } else {
+        setSuccess(true)
       }
-    ])
-
-    if (error) {
+    } catch (error: any) {
       alert("Error submitting order: " + error.message)
-    } else {
-      setSuccess(true)
     }
     setLoading(false)
   }
