@@ -1,6 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import PaymentButton from './PaymentButton'
 
 export const dynamic = 'force-dynamic'
 
@@ -109,12 +110,7 @@ export default async function CheckoutPage({ params }: { params: Promise<{ id: s
             <div className="space-y-8">
               <div className="pt-2">
                 <p className="text-white/80 text-sm mb-6">Secure Online Payment (0% UPI Fees)</p>
-                <form action="/api/payment/phonepe/initiate" method="POST">
-                  <input type="hidden" name="order_id" value={order.id} />
-                  <button type="submit" className="w-full bg-[#C9A84C] text-black py-4 px-6 uppercase tracking-widest text-sm font-medium hover:bg-[#D4B661] transition-colors">
-                    Pay via UPI
-                  </button>
-                </form>
+                <PaymentButton orderId={order.id} />
                 <p className="text-white/40 text-xs mt-4">You will be redirected to a secure payment gateway to complete your transaction.</p>
               </div>
             </div>

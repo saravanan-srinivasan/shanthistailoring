@@ -8,11 +8,11 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 export async function POST(request: Request) {
   try {
-    const formData = await request.formData();
-    const order_id = formData.get('order_id') as string;
+    const body = await request.json();
+    const order_id = body.order_id;
 
     if (!order_id) {
-      return NextResponse.redirect(new URL('/', request.url));
+      return NextResponse.json({ error: "Missing order ID" }, { status: 400 });
     }
 
     // 1. Fetch order details to get amount and customer info
@@ -24,7 +24,7 @@ export async function POST(request: Request) {
 
     if (error || !order) {
       console.error("Order not found:", error);
-      return NextResponse.redirect(new URL('/', request.url));
+      return NextResponse.json({ error: "Order not found" }, { status: 404 });
     }
 
     // PhonePe UAT Test Keys (Replace with Prod keys from env vars later)
@@ -80,15 +80,15 @@ export async function POST(request: Request) {
 
     if (result.success && result.data && result.data.instrumentResponse && result.data.instrumentResponse.redirectInfo) {
       const redirectUrl = result.data.instrumentResponse.redirectInfo.url;
-      // Redirect user to the PhonePe checkout page
-      return NextResponse.redirect(redirectUrl, 302);
+      // Return URL for the client component to redirect
+      return NextResponse.json({ url: redirectUrl });
     } else {
       console.error("PhonePe Error:", result);
-      return NextResponse.redirect(new URL(`/checkout/${order_id}?error=payment_initiation_failed`, request.url));
+      return NextResponse.json({ error: "Payment initiation failed" }, { status: 400 });
     }
 
   } catch (err) {
     console.error("Payment Initiate API error:", err);
-    return NextResponse.redirect(new URL('/', request.url));
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
