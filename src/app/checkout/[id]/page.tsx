@@ -112,7 +112,7 @@ export default async function CheckoutPage({ params }: { params: Promise<{ id: s
                 <form action="/api/payment/phonepe/initiate" method="POST">
                   <input type="hidden" name="order_id" value={order.id} />
                   <button type="submit" className="w-full bg-[#C9A84C] text-black py-4 px-6 uppercase tracking-widest text-sm font-medium hover:bg-[#D4B661] transition-colors">
-                    Pay with PhonePe / UPI
+                    Pay via UPI
                   </button>
                 </form>
                 <p className="text-white/40 text-xs mt-4">You will be redirected to a secure payment gateway to complete your transaction.</p>
