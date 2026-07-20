@@ -111,14 +111,16 @@ export default async function CheckoutPage({ params }: { params: Promise<{ id: s
               <div className="pt-2">
                 <p className="text-white/80 text-sm mb-4">Option 1: Pay Online via UPI (0% Fees)</p>
                 <div className="flex justify-center mb-6">
-                  <div className="bg-white p-4 rounded-sm">
+                  <a href={upiLink} className="bg-white p-4 rounded-sm block cursor-pointer hover:opacity-90 transition-opacity">
                     <img 
                       src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiLink)}`} 
                       alt="UPI QR Code" 
                       className="w-[200px] h-[200px]"
                     />
-                  </div>
+                  </a>
                 </div>
+                <p className="text-white/40 text-xs mb-1 text-center">Scanning from another phone? Just scan the code.</p>
+                <p className="text-[#C9A84C] text-xs mb-6 text-center font-medium">Viewing on mobile? Tap the QR code to open UPI!</p>
                 
                 <p className="text-white/40 text-xs mb-3">After scanning and paying, enter your 12-digit UTR (Transaction ID) to confirm.</p>
                 <form action="/api/quote/paid" method="POST" className="flex flex-col gap-3">
