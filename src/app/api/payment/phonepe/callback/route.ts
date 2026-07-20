@@ -16,7 +16,7 @@ export async function POST(request: Request) {
     }
 
     // PhonePe UAT Test Keys (Replace with Prod keys from env vars later)
-    const SALT_KEY = process.env.PHONEPE_SALT_KEY || '099eb0cd-02cf-4e2a-8aca-3e6c6aff0399';
+    const SALT_KEY = process.env.PHONEPE_SALT_KEY || '96434309-7796-489d-8924-ab56988a6076';
     const SALT_INDEX = process.env.PHONEPE_SALT_INDEX || '1';
 
     // 1. Verify the Checksum (X-VERIFY header)
