@@ -41,11 +41,15 @@ export async function POST(request: Request) {
     // Base URL of our website for the callback and redirect
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || new URL(request.url).origin;
 
+    // Compress UUID to 22 characters base64url to fit PhonePe's 34 character limit
+    const hexId = order_id.replace(/-/g, '');
+    const base64uuid = Buffer.from(hexId, 'hex').toString('base64url');
+
     // 2. Construct the Payload
     const payload = {
       merchantId: MERCHANT_ID,
-      merchantTransactionId: `TXN_${order_id}_${Date.now()}`,
-      merchantUserId: `MUID_${order_id}`,
+      merchantTransactionId: `${base64uuid}${Date.now().toString(36)}`,
+      merchantUserId: base64uuid,
       amount: Math.round(Number(order.quote_price) * 100), // PhonePe expects amount in paise (multiply by 100)
       redirectUrl: `${baseUrl}/api/payment/phonepe/check-status?id=${order_id}`,
       redirectMode: 'REDIRECT',

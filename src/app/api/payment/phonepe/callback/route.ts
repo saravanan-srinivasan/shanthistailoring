@@ -38,9 +38,17 @@ export async function POST(request: Request) {
     // 2. Decode the response
     const decodedPayload = JSON.parse(Buffer.from(base64Response, 'base64').toString('utf8'));
     
-    // merchantTransactionId looks like: TXN_{order_id}_{timestamp}
+    // merchantTransactionId looks like: {22-char-base64uuid}{timestamp}
     const merchantTransactionId = decodedPayload.data.merchantTransactionId;
-    const order_id = merchantTransactionId.split('_')[1];
+    const base64uuid = merchantTransactionId.substring(0, 22);
+    const decodedHex = Buffer.from(base64uuid, 'base64url').toString('hex');
+    const order_id = [
+      decodedHex.slice(0, 8),
+      decodedHex.slice(8, 12),
+      decodedHex.slice(12, 16),
+      decodedHex.slice(16, 20),
+      decodedHex.slice(20, 32)
+    ].join('-');
 
     if (decodedPayload.code === 'PAYMENT_SUCCESS') {
       // 3. Payment succeeded! Update the database
