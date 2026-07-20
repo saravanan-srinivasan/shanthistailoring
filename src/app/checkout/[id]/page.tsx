@@ -107,53 +107,15 @@ export default async function CheckoutPage({ params }: { params: Promise<{ id: s
             </div>
           ) : (
             <div className="space-y-8">
-              
               <div className="pt-2">
-                <p className="text-white/80 text-sm mb-4">Option 1: Pay Online via UPI (0% Fees)</p>
-                <div className="flex justify-center mb-6">
-                  <div className="bg-white p-4 rounded-sm">
-                    <img 
-                      src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiLink)}`} 
-                      alt="UPI QR Code" 
-                      className="w-[200px] h-[200px]"
-                    />
-                  </div>
-                </div>
-                
-                <p className="text-white/40 text-xs mb-3">After scanning and paying, enter your 12-digit UTR (Transaction ID) to confirm.</p>
-                <form action="/api/quote/paid" method="POST" className="flex flex-col gap-3">
+                <p className="text-white/80 text-sm mb-6">Secure Online Payment (0% UPI Fees)</p>
+                <form action="/api/payment/phonepe/initiate" method="POST">
                   <input type="hidden" name="order_id" value={order.id} />
-                  <input 
-                    type="text" 
-                    name="utr_number" 
-                    placeholder="Enter 12-digit UTR Number" 
-                    required 
-                    minLength={12} 
-                    maxLength={12}
-                    pattern="\d{12}"
-                    title="Please enter exactly 12 digits"
-                    className="bg-[#1A1A1A] border border-white/10 px-4 py-3 text-white text-sm outline-none focus:border-[#C9A84C] w-full text-center tracking-widest"
-                  />
-                  <button type="submit" className="border border-[#C9A84C]/50 text-[#C9A84C] w-full py-3 text-xs uppercase tracking-widest hover:bg-[#C9A84C]/10 transition-colors">
-                    I have completed the payment
+                  <button type="submit" className="w-full bg-[#C9A84C] text-black py-4 px-6 uppercase tracking-widest text-sm font-medium hover:bg-[#D4B661] transition-colors">
+                    Pay with PhonePe / UPI
                   </button>
                 </form>
-              </div>
-
-              <div className="relative flex py-4 items-center">
-                <div className="flex-grow border-t border-white/10"></div>
-                <span className="flex-shrink-0 mx-4 text-white/30 text-xs uppercase tracking-widest">OR</span>
-                <div className="flex-grow border-t border-white/10"></div>
-              </div>
-
-              <div className="pb-4">
-                <p className="text-white/80 text-sm mb-4">Option 2: Pay on Delivery</p>
-                <form action="/api/quote/cod" method="POST">
-                  <input type="hidden" name="order_id" value={order.id} />
-                  <button type="submit" className="w-full bg-white/10 text-white py-4 px-6 uppercase tracking-widest text-sm font-medium hover:bg-white/20 transition-colors">
-                    Pay on Delivery
-                  </button>
-                </form>
+                <p className="text-white/40 text-xs mt-4">You will be redirected to a secure payment gateway to complete your transaction.</p>
               </div>
             </div>
           )}
